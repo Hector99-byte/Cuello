@@ -1,58 +1,37 @@
-import cv2
-from medida import Medida
+from recordtype import recordtype
+
 class Objeto:
 
-	def __init__(self, nombre, medicion1, medicion2, medicion3, medicion4):
-		self.nombre = nombre
-		self.setMedicion1(medicion1)
-		self.setMedicion2(medicion2)
-		self.setMedicion3(medicion3)
-		self.setMedicion4(medicion4)
+	Mediciones = recordtype('mediciones', 'valor umbral umbralCalculado')
 
-	def setMedicion1(self, _medicion1):
-		self.medicion1 = Medida()
-		medicion1 = list(_medicion1)
-		self.medicion1.setValorEsperado(medicion1[0])
-		self.medicion1.setUmbral(medicion1[1])
+	def __init__(self,  valoresArea, valoresPerimetro, valoresDiametroEquivalente, valoresExtent):
+		self.area = self.Mediciones(valoresArea[0], valoresArea[1], 0)
+		self.perimetro = self.Mediciones(valoresPerimetro[0], valoresPerimetro[1], 0)
+		self.diametroExterno = self.Mediciones(valoresDiametroEquivalente[0], valoresDiametroEquivalente[1], 0)
+		self.extent = self.Mediciones(valoresExtent[0], valoresExtent[1], 0)
 
-	def setMedicion2(self, _medicion2):
-		self.medicion2 = Medida()
-		medicion2 = list(_medicion2)
-		self.medicion2.setValorEsperado(medicion2[0])
-		self.medicion2.setUmbral(medicion2[1])
+	def calcularUmbral(self, area, perimetro, diametroExterno, extent):
 
-	def setMedicion3(self, _medicion3):
-		self.medicion3 = Medida()
-		medicion3 = list(_medicion3)
-		self.medicion3.setValorEsperado(medicion3[0])
-		self.medicion3.setUmbral(medicion3[1])
+		self.area.umbralCalculado = self.area.valor - area
+		self.perimetro.umbralCalculado = self.perimetro.valor - perimetro
+		self.diametroExterno.umbralCalculado = self.diametroExterno.valor - diametroExterno
+		self.extent.umbralCalculado = self.extent.valor - extent
+		self.convertirAValoresAbsolutos()
 
-	def setMedicion4(self, _medicion4):
-		self.medicion4 = Medida()
-		medicion4 = list(_medicion4)
-		self.medicion4.setValorEsperado(medicion4[0])
-		self.medicion4.setUmbral(medicion4[1])
-
-	def calculoValoresUmbral(self, a, p, de, excent):
-		self.medicion1.setMedicionObtenida(self.medicion1.valorEsperado - a)
-		self.medicion2.setMedicionObtenida(self.medicion2.valorEsperado - p)
-		self.medicion3.setMedicionObtenida(self.medicion3.valorEsperado - de)
-		self.medicion4.setMedicionObtenida(self.medicion4.valorEsperado - excent)
-		self.ajustarValores()
-
-	def ajustarValores(self):
-		if self.medicion1.medicionObtenida < 0:
-			self.medicion1.medicionObtenida *= -1
-		if self.medicion2.medicionObtenida < 0:
-			self.medicion2.medicionObtenida *= -1
-		if self.medicion3.medicionObtenida < 0:
-			self.medicion3.medicionObtenida *= -1
-		if self.medicion4.medicionObtenida < 0:
-			self.medicion4.medicionObtenida *= -1
+	def convertirAValoresAbsolutos(self):
+		if self.area.umbralCalculado < 0:
+			self.area.umbralCalculado *= -1
+		if self.perimetro.umbralCalculado < 0:
+			self.perimetro.umbralCalculado *= -1
+		if self.diametroExterno.umbralCalculado < 0:
+			self.diametroExterno.umbralCalculado *= -1
+		if self.extent.umbralCalculado < 0:
+			self.extent.umbralCalculado *= -1
 
 	def isObjeto(self):
-		if self.medicion1.medicionObtenida <= self.medicion1.umbral and self.medicion2.medicionObtenida <= self.medicion2.umbral and self.medicion3.medicionObtenida <= self.medicion3.umbral and self.medicion4.medicionObtenida <= self.medicion4.umbral:
+		if self.area.umbralCalculado <= self.area.umbral and self.perimetro.umbralCalculado <= self.perimetro.umbral and self.diametroExterno.umbralCalculado <= self.diametroExterno.umbral and self.extent.umbralCalculado <= self.extent.umbral:
 		#if self.medicion1.medicionObtenida <= self.medicion1.umbral and self.medicion2.medicionObtenida <= self.medicion2.umbral and self.medicion3.medicionObtenida <= self.medicion3.umbral:
 			return True
 
 		return False
+
